@@ -1,0 +1,98 @@
+<html>
+<body class="relative bg-red-200">
+  <div id="container-aykin-chat" class="absolute bottom-0 flex flex-col items-end justify-end w-full bg-yellow-200 h-full p-4">
+    <div id="aykin-chat-head" style="display: block;" class="bg-red-500 w-full lg:w-[300px] text-md">kkkkkkk</div>
+    <div id="aykin-chat" class="w-full lg:w-[300px] h-[500px] bg-zinc-200 rounded overflow-auto flex flex-col" style="display: block;">
+        
+      <div class="chat chat-start">
+        <div class="chat-image avatar">
+          <div class="w-28 lg:w-10 rounded-full bg-slate-50">
+            <img alt="Tailwind CSS chat bubble component" src="https://aykin.fr/images/logos/logo-black.svg" />
+          </div>
+        </div>
+        <div class="chat-bubble">Que souhaitez-vous me demander? I speak all languages, so feel free to speak in whichever one you prefer.</div>
+      </div>
+      <div id="messages" class="flex-1 overflow-y-auto p-4"></div>
+      <div class="m-4">
+        <textarea id="user-input" placeholder="Tapez votre message" class="textarea textarea-bordered textarea-xs w-full max-w-xs"></textarea>
+        <button class="btn btn-neutral my-4" onclick="sendMessage()">Envoyer</button>
+      </div>
+    </div>
+    <div class="w-full flex flex-row justify-end">
+      <button onclick="handleChangeVisibility()" class="rounded-full bg-neutral w-12 h-12 flex flex-col justify-center items-center">
+        <img class="w-8 object-cover" src="./chat-icon.png" />
+      </button>
+    </div>
+  </div>
+  <script>
+    const handleChangeVisibility = () => {
+      const chatElement = document.getElementById('aykin-chat');
+      const chatElementHead = document.getElementById('aykin-chat-head');
+      if (chatElement.style.display === 'none' || chatElement.style.display === '') {
+        chatElement.style.display = 'block';
+        chatElementHead.style.display = 'block';
+      } else {
+        chatElement.style.display = 'none';
+        chatElementHead.style.display = 'none';
+      }
+    }
+
+    const sendMessage = () => {
+      const userInput = document.getElementById('user-input');
+      const userMessage = userInput.value.trim();
+      if (!userMessage) return;
+
+      const messagesDiv = document.getElementById('messages');
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.className = 'chat chat-end';
+      userMessageDiv.innerHTML = `
+        <div class="chat-image avatar"></div>
+        <div class="chat-bubble">${userMessage}</div>
+      `;
+      messagesDiv.appendChild(userMessageDiv);
+
+      userInput.value = '';
+
+      fetch('https://localhost:8000/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'chat chat-start';
+        botMessageDiv.innerHTML = `
+          <div class="chat-image avatar">
+            <div class="w-10 rounded-full bg-ghost">
+              <img alt="Tailwind CSS chat bubble component" src="https://aykin.fr/images/logos/logo-black.svg" />
+            </div>
+          </div>
+          <div class="chat-bubble">${data.response}</div>
+        `;
+        messagesDiv.appendChild(botMessageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const errorMessageDiv = document.createElement('div');
+        errorMessageDiv.className = 'chat chat-start';
+        errorMessageDiv.innerHTML = `
+          <div class="chat-image avatar">
+            <div class="w-10 rounded-full">
+              <img alt="Tailwind CSS chat bubble component" src="https://aykin.fr/images/logos/logo-black.svg" />
+            </div>
+          </div>
+          <div class="chat-bubble">Oups erreur, connectez-vous plus tard</div>
+        `;
+        messagesDiv.appendChild(errorMessageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      });
+    }
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>
