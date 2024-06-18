@@ -11,7 +11,7 @@
   <body class="relative bg-red-200 h-screen w-screen">
     <div
       id="container-aykin-chat"
-      class="absolute bottom-0 flex flex-col items-end justify-end w-full bg-red-200 h-full p-4"
+      class="absolute bottom-0 flex flex-col items-end justify-end w-full bg-amber-300 h-full p-4"
     >
     <p>hhhhhhhhh</p>
       <div
@@ -41,13 +41,13 @@
           </div>
         </div>
         <div id="messages" class="flex-1 overflow-y-auto p-4"></div>
-        <div class="m-4">
+        <div class="p-4 w-full">
           <textarea
             id="user-input"
             placeholder="Tapez votre message"
-            class="textarea textarea-bordered textarea-xs w-full max-w-xs"
+            class="textarea textarea-bordered w-full resize-none"
           ></textarea>
-          <button class="btn btn-neutral my-4" onclick="sendMessage()">
+          <button class="btn btn-lg btn-neutral my-4" onclick="sendMessage()">
             Envoyer
           </button>
         </div>
